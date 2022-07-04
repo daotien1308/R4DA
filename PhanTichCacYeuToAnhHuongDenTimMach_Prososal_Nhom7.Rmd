@@ -1,0 +1,143 @@
+---
+title: "Prososal"
+author: "Nhóm 7"
+date: "10/31/2021"
+output:
+  html_document: default
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+### Các thành viên nhóm 7 :
+####  Hoàng Minh Nhật          MSSV: 19133042
+####  Trần Nguyên Thái Bảo     MSSV: 19133010
+####  Đào Thị Cẩm Tiên         MSSV: 19133055
+####  Đinh Quốc Hùng           MSSV: 19133025
+
+### Tên đề tài :
+#                                           Phân tích các yếu tố ảnh hưởng đến tim mạch
+
+## Phần 1 : Giới thiệu
+- **Tổng quan về đề tài** : Suy tim là một sự kiện phổ biến do CVDs gây ra và tập dữ liệu này có 11 yếu tố có thể được sử dụng để dự đoán bệnh tim có thể xảy ra. Những người mắc bệnh tim mạch hoặc những người có nguy cơ tim mạch cao (do sự hiện diện của một hoặc nhiều yếu tố nguy cơ như tăng huyết áp, tiểu đường, tăng lipid máu hoặc bệnh đã có sẵn) cần được phát hiện và quản lý sớm, phân tích các yếu tố riêng biệt , tương quan giữa chúng giúp chúng ta biết thêm nhiều thông tin quan trọng , trong đó mô hình học máy có thể giúp ích rất nhiều trong việc chuẩn đoán bệnh tim .
+- **Nguồn dữ liệu**: https://www.kaggle.com/fedesoriano/heart-failure-prediction
+- Tập dữ liệu này được tạo bằng cách kết hợp các tập dữ liệu khác nhau đã có sẵn một cách độc lập nhưng chưa được kết hợp trước đó. Trong bộ dữ liệu này, 5 bộ dữ liệu về tim được kết hợp trên 11 đặc điểm chung :
+  + Cleveland: 303 quan sát
+  + Hungarian: 294 quan sát
+  + Switzerland: 123 quan sát
+  + Long Beach VA: 200 quan sát
+  + Stalog (Heart) Data Set: 270 quan sát
+- *Bộ dữ liệu cuối cùng*: 918 quan sát 
+- Mọi bộ dữ liệu được sử dụng có thể được tìm thấy trong Chỉ mục bộ dữ liệu bệnh tim từ Kho lưu trữ Máy học UCI trên liên kết sau:https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/
+- Tác giả của dữ liệu :
+  + Viện Tim mạch Hungary. Budapest: Andras Janosi, M.D.
+  + Bệnh viện Đại học, Zurich, Thụy Sĩ: William Steinbrunn, M.D.
+  + Bệnh viện Đại học, Basel, Thụy Sĩ: Matthias Pfisterer, M.D.
+  + V.A. Trung tâm Y tế, Long Beach và Tổ chức Phòng khám Cleveland: Robert Detrano, M.D., Ph.D.
+
+## Phần 2 : Dữ liệu
+### Import các thư viện :
+```{r}
+library("knitr")
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+
+```
+
+### Các biến :
+- Tập dữ liệu có gồm có 12 biến: Age, Sex, ChestPainType, RestingBP, Choleserol, FastingBS, RestingECG, MaxHR, ExerciseAngina, Oldpeak, ST_Slope, HeartDisease
+- Tập dữ liệu bao gồm 918 đối tượng
+- Biến phân loại (category/qualitative variable):
+  + Sex, ChestPainType, RestingECG, ExerciseAngina, ST_Slope ,FastingBS, HeartDisease
+- Biến số (numeric/quantitative variable):
+  + Age, RestingBP, Choleserol, MaxHR, Oldpeak
+
+### Mô tả tên các biến và ý nghĩa :
+
+- Age: Tuổi của các bệnh nhân (years)
+
+- Sex: giới tính của bệnh nhân (M:Male, F: Female)
+
+- ChestPainType: các kiểu đau ngực (TA: Typical Angina, ATA: Atypical Angina, NAP: Non-Anginal Pain, ASY: Asymptomatic )
+
+- RestingBP: huyết áp nghỉ ngơi (mm Hg)
+
+- serum Cholesterol: Mức cholesterol trong huyết thanh của một người đại diện cho tổng lượng cholesterol trong máu của họ (mm/dl)
+
+- FastingBS: đường huyết lúc đói (1: nếu BS lúc đói > 120 mg/dl, 0:otherwise)
+
+- RestingECG: kết quả điện tâm đồ lúc nghỉ (Normal: bình thường, ST: có bất thường sóng ST-T (đảo ngược sóng T và/hoặc ST chênh lên hoặc giảm> 0,05 mV), LVH: hiển thị phì đại thất trái có thể xảy ra hoặc xác định theo tiêu chí của Estes)
+
+- MaxHR: nhịp tim tối đa đạt được (giữa 60 và 202)
+
+- ExerciseAngina: đau thắt ngực do tập thể dục (Y: yes, N: No)
+
+- Oldpeak: oldpeak =ST(giá trị số được đo bằng độ trầm cảm)
+
+- ST_Slope: nhịp tim lúc tập thể dục(Up: dốc lên, Flat: phẳng, Down: dốc xuống)
+
+- HeartDisease: kết quả đầu ra (1: bệnh tim, 0: Bình thường)
+
+```{r}
+dataheart <- read.csv("heart.csv")
+str(dataheart)
+head(dataheart, 10)
+```
+```{r}
+summary(dataheart)
+```
+
+
+## Phần 3 : Kế hoạch phân tích dữ liệu
+
+  1.Các yếu tố ảnh hưởng đến bệnh tim có phân bố như thế nào ? 
+    
+    - Biến dự đoán (X) : 11 biến (Age,Sex,ChestPainType,RestingBP,Cholesterol,FastingBS,RestingECG,MaxHR,ExerciseAngina,Oldpeak,ST_Slope )
+    - Biến kết quả (Y) : count
+    - Ý nghĩa : từ phân tích này giúp chúng ta hiểu được phân bố của các yếu tố ảnh hưởng đến bệnh tim .
+    - Biểu đồ có thể sử dụng : histogram 
+    - Phương pháp sử dụng : thống kê mô tả (Mô tả các đặc trưng của một phân bố cho biến số , Mô tả các đặc trưng của một phân bố cho biến phân loại).
+
+  
+  2.Phân tích các yếu tố có ảnh hưởng như thế nào đối với bệnh tim ? đâu là những yếu tố chính gây ra bệnh tim ?
+    
+    - Biến dự đoán (X) : 11 biến (Age,Sex,ChestPainType,RestingBP,Cholesterol,FastingBS,RestingECG,MaxHR,ExerciseAngina,Oldpeak,ST_Slope )
+    - Biến kết quả (Y) : HeartDisease 
+    - Ý nghĩa : từ phân tích này chúng ta thấy được một cách tổng quan về các yếu tố ảnh hưởng đến bệnh tim , từ biểu đồ rút ra kết luận về các yếu tố chủ yếu gây nên bệnh tim .
+    - Biểu đồ có thể sử dụng : Điểm , đường .
+    - Phương pháp sử dụng : Thống kê mô tả (Mô tả mối quan hệ của hai biến phân loại , Mô tả phân bố của một biến số theo các nhóm của một biến phân loại).
+
+  
+  3.Có phải nữ có nguy cơ mắc bệnh tim cao hơn nam hay không ? 
+    
+    - Biến dự đoán (X) : Sex .
+    - ý nghĩa : từ kiểm định này chúng ta có thể biết được giới tính có nguy cơ mắc bệnh tim cao hơn .
+    - Phương pháp sử dụng : kiểm định thống kê (two sample t-test for two means (μ1,μ2)).
+    
+    
+  4.Ước lượng độ tuổi có nguy cơ mắc bệnh tim cao ?
+    
+    - Biến dự đoán (X) : Age .
+    - Biến kết quả (Y) : HeartDisease .
+    - Ý nghĩa : từ phân tích này chúng ta biết được khoảng độ tuổi nào là có nguy cơ cao để từ đó có những lời khuyên phù hợp cho bệnh nhân .
+    - phương pháp sử dụng : Ước lượng population mean
+  
+  5.Xây dựng mô hình chuẩn đoán bệnh suy tim dựa vào bộ dữ liệu **heart.csv** 
+    
+    - Để chuẩn đoán cần input là kết quả đo của bác sĩ là 11 biến (Age, Sex, ChestPainType, RestingBP, Choleserol, FastingBS, RestingECG, MaxHR, ExerciseAngina, Oldpeak, ST_Slope).
+    - kết quả là HeartDisease (1 : có nguy cơ mắc bệnh tim , 0 : không có nguy cơ mắc bệnh tim ) , xác suất chuẩn đoán là bao nhiêu ?
+    - Phương pháp sử dụng : học có giám sát SVM (Support vector machine).
+
+### Phân công công việc 
+
+**Nhóm trưởng**: Hoàng Minh Nhật  MSSV:19133042 ( Công việc : Câu 5 : Xây dựng mô hình dự đoán bệnh tim dựa trên thuật toán SVM, tham khảo mô hình Decion tree , KNN .Tổng hợp và chỉnh sửa , viết báo cáo . )
+
+**Thành viên**: Trần Nguyên Thái Bảo     MSSV: 19133010 (Công việc : Phần 1: giới thiệu , Câu 2 : Phân tích các yếu tố có ảnh hưởng như thế nào đối với bệnh tim ? đâu là những yếu tố chính gây ra bệnh tim ? )              
+
+**Thành Viên**: Đào Thị Cẩm Tiên         MSSV: 19133055 (Công việc : Phần 2 : Dữ liêụ ,Câu 1 : Các yếu tố ảnh hưởng đến bệnh tim có phân bố như thế nào ?)           
+
+**Thành viên**: Đinh Quốc Hùng           MSSV: 19133025  (Công việc : Câu 3 : Có phải nữ có nguy cơ mắc bệnh tim cao hơn nam hay không ?  , Câu 4 : Ước lượng độ tuổi có nguy cơ mắc bệnh tim cao ?) 
