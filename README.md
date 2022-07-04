@@ -3,7 +3,7 @@
 2. Trần Nguyên Thái Bảo MSSV: 19133010
 3. Đào Thị Cẩm Tiên MSSV: 19133055
 4. Đinh Quốc Hùng MSSV: 19133025
-## Phần 1 : Giới thiệu tổng quan về đề tài
+## Giới thiệu tổng quan về đề tài
 - **Tổng quan về đề tài** : Suy tim là một sự kiện phổ biến do CVDs gây ra và tập dữ liệu này có 11 yếu tố có thể được sử dụng để dự đoán bệnh tim có thể xảy ra. Những người mắc bệnh tim mạch hoặc những người có nguy cơ tim mạch cao (do sự hiện diện của một hoặc nhiều yếu tố nguy cơ như tăng huyết áp, tiểu đường, tăng lipid máu hoặc bệnh đã có sẵn) cần được phát hiện và quản lý sớm, phân tích các yếu tố riêng biệt , tương quan giữa chúng giúp chúng ta biết thêm nhiều thông tin quan trọng , trong đó mô hình học máy có thể giúp ích rất nhiều trong việc chuẩn đoán bệnh tim .
 - **Nguồn dữ liệu**: https://www.kaggle.com/fedesoriano/heart-failure-prediction
 - Tập dữ liệu này được tạo bằng cách kết hợp các tập dữ liệu khác nhau đã có sẵn một cách độc lập nhưng chưa được kết hợp trước đó. Trong bộ dữ liệu này, 5 bộ dữ liệu về tim được kết hợp trên 11 đặc điểm chung :
